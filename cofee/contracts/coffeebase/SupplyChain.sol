@@ -165,7 +165,7 @@ contract SupplyChain is Ownable, ConsumerRole, RetailerRole, DistributorRole, Fa
   function harvestItem(uint _upc, address _originFarmerID, string _originFarmName, string _originFarmInformation, string  _originFarmLatitude, string  _originFarmLongitude, string  _productNotes) onlyFarmer public 
   {
     // Add the new item as part of Harvest
-      items[_upc].sku = sku;
+    items[_upc].sku = sku;
     items[_upc].upc = _upc;
     items[_upc].originFarmerID = _originFarmerID;
     items[_upc].originFarmName = _originFarmName;
@@ -213,6 +213,7 @@ contract SupplyChain is Ownable, ConsumerRole, RetailerRole, DistributorRole, Fa
    packed(_upc);
   // Call modifier to verify caller of this function
     verifyCaller(items[_upc].originFarmerID);
+    
   {
     // Update the appropriate fields
        items[_upc].itemState = State.ForSale;
@@ -239,6 +240,7 @@ contract SupplyChain is Ownable, ConsumerRole, RetailerRole, DistributorRole, Fa
     items[_upc].distributorID = msg.sender;
     items[_upc].itemState = State.Sold;
     // Transfer money to farmer
+    
       items[_upc].originFarmerID.transfer(items[_upc].productPrice);
     //items[_upc].transferOwnership(msg.sender);
     
@@ -262,7 +264,7 @@ contract SupplyChain is Ownable, ConsumerRole, RetailerRole, DistributorRole, Fa
 
   // Define a function 'receiveItem' that allows the retailer to mark an item 'Received'
   // Use the above modifiers to check if the item is shipped
-  function receiveItem(uint _upc) public 
+  function receiveItem(uint _upc) onlyRetailer public 
     // Call modifier to check if upc has passed previous supply chain stage
       shipped(_upc);
     // Access Control List enforced by calling Smart Contract / DApp
@@ -278,7 +280,7 @@ contract SupplyChain is Ownable, ConsumerRole, RetailerRole, DistributorRole, Fa
 
   // Define a function 'purchaseItem' that allows the consumer to mark an item 'Purchased'
   // Use the above modifiers to check if the item is received
-  function purchaseItem(uint _upc) onlyDistributor  public 
+  function purchaseItem(uint _upc) onlyConsumer public 
     // Call modifier to check if upc has passed previous supply chain stage
         received(_upc);
     // Access Control List enforced by calling Smart Contract / DApp
